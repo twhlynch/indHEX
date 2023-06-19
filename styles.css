@@ -104,3 +104,6 @@ button {
     color: #ddd;
     cursor: pointer;
 }
+input {
+    display: none;
+}

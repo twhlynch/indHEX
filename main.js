@@ -3,6 +3,7 @@ const textOutput = document.getElementById('text').childNodes[1];
 const lineOutput = document.getElementById('lines').childNodes[1];
 
 var activeHex = true;
+var fileName = 'Untitled.txt';
 
 window.addEventListener('dragover', handleDragOver, false);
 window.addEventListener('drop', handleFileDrop, false);
@@ -10,6 +11,9 @@ window.addEventListener("mouseout", handleLeave, false);
 window.addEventListener("mouseover", handleHover, false);
 window.addEventListener("click", handleClick, false);
 window.addEventListener("keydown", handleKey, false);
+document.getElementById('file').addEventListener("change", openFile, false);
+document.getElementById('save').addEventListener("click", saveFile, false);
+document.getElementById('open').addEventListener("click", () => {document.getElementById('file').click();}, false);
 
 function handleDragOver(event) {
     event.preventDefault();
@@ -21,6 +25,7 @@ function handleFileDrop(event) {
 
     const files = event.dataTransfer.files;
     const file = files[0];
+    fileName = file.name;
     const reader = new FileReader();
 
     reader.onload = function (event) {
@@ -58,6 +63,67 @@ function handleFileDrop(event) {
     };
 
     reader.readAsArrayBuffer(file);
+}
+
+function openFile(event) {
+    const files = event.target.files;
+    const file = files[0];
+    fileName = file.name;
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+        const arrayBuffer = event.target.result;
+        const byteArray = new Uint8Array(arrayBuffer);
+        const hexArray = Array.from(byteArray, byte => byte.toString(16).padStart(2, '0'));
+        
+        let lineVal = 0;
+        for (let i = 0; i < byteArray.length; i++) {
+            const byteValue = byteArray[i];
+            const hexValue = hexArray[i];
+            const strValue = String.fromCharCode(byteValue);
+            
+            if (i % 16 == 0) {
+                const lineElement = document.createElement('span');
+                lineElement.innerText  = lineVal.toString(16).padStart(8, '0').toUpperCase();
+                lineVal += 16;
+                lineOutput.appendChild(lineElement);
+            }
+
+            const hexElement = document.createElement('span');
+            hexElement.innerText = hexValue.toUpperCase();
+            hexOutput.appendChild(hexElement);
+
+            const textElement = document.createElement('span');
+            textElement.innerText = strValue;
+            if (byteValue >= 0 && byteValue < 32) {
+                textElement.className = 'lf';
+                textElement.innerText = " ";
+            }
+            textOutput.appendChild(textElement);
+        }
+        textOutput.children[0].id = 'selected-text';
+        hexOutput.children[0].id = 'selected-hex';
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+function saveFile() {
+    const bytes = [];
+    const children = hexOutput.children;
+    for (let i = 0; i < children.length; i++) {
+        bytes.push(parseInt(children[i].innerText, 16));
+    };
+    const byteArray = new Uint8Array(bytes);
+    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function handleHover(event) {
@@ -108,7 +174,7 @@ function handleKey(event) {
         var selected = document.getElementById('selected-hex');
         if ("1234567890abcdef".includes(event.key) && !" ".includes(event.key)) {
             if (selected.getAttribute('data-type') == '1') {
-                selected.innerText += event.key;
+                selected.innerText += event.key.toUpperCase();;
                 selected.setAttribute('data-type', '0');
                 let index =  Array.prototype.indexOf.call(selected.parentNode.children, selected);
                 let byteVal = parseInt(selected.innerText, 16);
@@ -116,11 +182,13 @@ function handleKey(event) {
                 if (byteVal >= 0 && byteVal < 32) {
                     textOutput.children[index].className = 'lf';
                     text = " ";
+                } else {
+                    textOutput.children[index].className = '';
                 }
                 textOutput.children[index].innerText = text;
                 selected.parentNode.children[index + 1].click();
             } else {
-                selected.innerText = event.key;
+                selected.innerText = event.key.toUpperCase();;
                 selected.setAttribute('data-type', '1');
             }
         }
@@ -128,10 +196,11 @@ function handleKey(event) {
         if (event.key.length == 1) {
             var selected = document.getElementById('selected-text');
             selected.innerText = event.key;
+            selected.className = '';
             let index =  Array.prototype.indexOf.call(selected.parentNode.children, selected);
 
             let byteVal = selected.innerText.charCodeAt(0);
-            let hex = byteVal.toString(16).padStart(2, '0');
+            let hex = byteVal.toString(16).padStart(2, '0').toUpperCase();;
 
             hexOutput.children[index].innerText = hex;
             selected.parentNode.children[index + 1].click();
