@@ -12,8 +12,10 @@ window.addEventListener("mouseover", handleHover, false);
 window.addEventListener("click", handleClick, false);
 window.addEventListener("keydown", handleKey, false);
 document.getElementById('file').addEventListener("change", openFile, false);
+document.getElementById('file-a').addEventListener("change", (event) => {openFile(event, false)}, false);
 document.getElementById('save').addEventListener("click", saveFile, false);
 document.getElementById('open').addEventListener("click", () => {document.getElementById('file').click();}, false);
+document.getElementById('append').addEventListener("click", () => {document.getElementById('file-a').click();}, false);
 
 function handleDragOver(event) {
     event.preventDefault();
@@ -65,7 +67,12 @@ function handleFileDrop(event) {
     reader.readAsArrayBuffer(file);
 }
 
-function openFile(event) {
+function openFile(event, clear = true) {
+    if (clear) {
+        hexOutput.innerText = '';
+        textOutput.innerText = '';
+    }
+    console.log(event);
     const files = event.target.files;
     const file = files[0];
     fileName = file.name;
