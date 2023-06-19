@@ -163,14 +163,14 @@ function handleClick(event) {
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         textOutput.children[index].id = 'selected-text';
         getInfo(
-            event.target.innerText
-            + (() => {try{return hexOutput.children[index + 1].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 2].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 3].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 4].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 5].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 6].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 7].innerText}catch{return '00'}})
+            event.target.innerText +
+            (hexOutput.children[index + 1]?.innerText ?? '00') +
+            (hexOutput.children[index + 2]?.innerText ?? '00') +
+            (hexOutput.children[index + 3]?.innerText ?? '00') +
+            (hexOutput.children[index + 4]?.innerText ?? '00') +
+            (hexOutput.children[index + 5]?.innerText ?? '00') +
+            (hexOutput.children[index + 6]?.innerText ?? '00') +
+            (hexOutput.children[index + 7]?.innerText ?? '00')
             , index, hexOutput.children.length);
     } else if (event.target.parentNode.parentNode.id == "text") {
         activeHex = false;
@@ -183,14 +183,14 @@ function handleClick(event) {
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].id = 'selected-hex';
         getInfo(
-            hexOutput.children[index].innerText
-            + (() => {try{return hexOutput.children[index + 1].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 2].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 3].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 4].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 5].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 6].innerText}catch{return '00'}})
-            + (() => {try{return hexOutput.children[index + 7].innerText}catch{return '00'}})
+            hexOutput.children[index].innerText +
+            (hexOutput.children[index + 1]?.innerText ?? '00') +
+            (hexOutput.children[index + 2]?.innerText ?? '00') +
+            (hexOutput.children[index + 3]?.innerText ?? '00') +
+            (hexOutput.children[index + 4]?.innerText ?? '00') +
+            (hexOutput.children[index + 5]?.innerText ?? '00') +
+            (hexOutput.children[index + 6]?.innerText ?? '00') +
+            (hexOutput.children[index + 7]?.innerText ?? '00')
             , index, hexOutput.children.length);
     }
 }
@@ -280,7 +280,7 @@ function getInfo(hexData, index, length) {
 
     document.getElementById('name').innerText = fileName;
     document.getElementById('bytes').innerText = length+" bytes";
-    document.getElementById('addr').innerText = index.toString(16).padStart(8, '0').toUpperCase();;
+    document.getElementById('addr').innerText = index.toString(16).padStart(8, '0').toUpperCase();
     document.getElementById('8b').innerText = Uint8;
     document.getElementById('16b').innerText = Uint16;
     document.getElementById('32b').innerText = Uint32;
