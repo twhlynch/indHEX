@@ -48,6 +48,7 @@ section {
 #info {
     background-color: #292929;
     width: fit-content;
+    width: 100%;
 }
 #hex, #text, #lines {
     background-color: #222;
@@ -55,6 +56,7 @@ section {
 #info > div {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    width: 100%;
 }
 #info > div > span {
     padding-inline: 10px;

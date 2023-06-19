@@ -43,7 +43,7 @@ function handleFileDrop(event) {
             
             if (i % 16 == 0) {
                 const lineElement = document.createElement('span');
-                lineElement.innerText  = lineVal.toString(16).padStart(8, '0').toUpperCase();
+                lineElement.innerText = lineVal.toString(16).padStart(8, '0').toUpperCase();
                 lineVal += 16;
                 lineOutput.appendChild(lineElement);
             }
@@ -54,7 +54,7 @@ function handleFileDrop(event) {
 
             const textElement = document.createElement('span');
             textElement.innerText = strValue;
-            if (byteValue >= 0 && byteValue < 32) {
+            if ((byteValue >= 0 && byteValue) < 32 || (byteValue >= 128 && byteValue < 160)) {
                 textElement.className = 'lf';
                 textElement.innerText = " ";
             }
@@ -72,7 +72,6 @@ function openFile(event, clear = true) {
         hexOutput.innerText = '';
         textOutput.innerText = '';
     }
-    console.log(event);
     const files = event.target.files;
     const file = files[0];
     fileName = file.name;
@@ -102,7 +101,7 @@ function openFile(event, clear = true) {
 
             const textElement = document.createElement('span');
             textElement.innerText = strValue;
-            if (byteValue >= 0 && byteValue < 32) {
+            if ((byteValue >= 0 && byteValue) < 32 || (byteValue >= 128 && byteValue < 160)) {
                 textElement.className = 'lf';
                 textElement.innerText = " ";
             }
@@ -163,6 +162,7 @@ function handleClick(event) {
         activeHex = true;
         if (document.getElementById('selected-hex').innerText.length == 1) {
             document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
+            document.getElementById('selected-hex').setAttribute('data-type', '0');
         }
         document.getElementById('selected-hex').id = null;
         document.getElementById('selected-text').id = null;
@@ -183,6 +183,7 @@ function handleClick(event) {
         activeHex = false;
         if (document.getElementById('selected-hex').innerText.length == 1) {
             document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
+            document.getElementById('selected-hex').setAttribute('data-type', '0');
         }
         document.getElementById('selected-text').id = null;
         document.getElementById('selected-hex').id = null;
@@ -242,7 +243,7 @@ function handleKey(event) {
                 let index =  Array.prototype.indexOf.call(selected.parentNode.children, selected);
                 let byteVal = parseInt(selected.innerText, 16);
                 let text = String.fromCharCode(byteVal);
-                if (byteVal >= 0 && byteVal < 32) {
+                if ((byteVal >= 0 && byteVal) < 32 || (byteVal >= 128 && byteVal < 160)) {
                     textOutput.children[index].className = 'lf';
                     text = " ";
                 } else {
