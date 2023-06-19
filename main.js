@@ -103,6 +103,7 @@ function openFile(event) {
         }
         textOutput.children[0].id = 'selected-text';
         hexOutput.children[0].id = 'selected-hex';
+        hexOutput.children[0].click();
     };
 
     reader.readAsArrayBuffer(file);
@@ -153,23 +154,78 @@ function handleLeave(event) {
 function handleClick(event) {
     if (event.target.parentNode.parentNode.id == "hex") {
         activeHex = true;
+        if (document.getElementById('selected-hex').innerText.length == 1) {
+            document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
+        }
         document.getElementById('selected-hex').id = null;
         document.getElementById('selected-text').id = null;
         event.target.id = 'selected-hex';
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         textOutput.children[index].id = 'selected-text';
+        getInfo(
+            event.target.innerText
+            + (() => {try{return hexOutput.children[index + 1].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 2].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 3].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 4].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 5].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 6].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 7].innerText}catch{return '00'}})
+            , index, hexOutput.children.length);
     } else if (event.target.parentNode.parentNode.id == "text") {
         activeHex = false;
+        if (document.getElementById('selected-hex').innerText.length == 1) {
+            document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
+        }
         document.getElementById('selected-text').id = null;
         document.getElementById('selected-hex').id = null;
         event.target.id = 'selected-text';
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].id = 'selected-hex';
+        getInfo(
+            hexOutput.children[index].innerText
+            + (() => {try{return hexOutput.children[index + 1].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 2].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 3].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 4].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 5].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 6].innerText}catch{return '00'}})
+            + (() => {try{return hexOutput.children[index + 7].innerText}catch{return '00'}})
+            , index, hexOutput.children.length);
     }
 }
 
 function handleKey(event) {
     event.preventDefault();
+    if (event.keyCode == 37) {
+        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+        if (activeHex) {
+            hexOutput.children[index - 1].click();
+        } else {
+            textOutput.children[index - 1].click();
+        }
+    } else if (event.keyCode == 39) {
+        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+        if (activeHex) {
+            hexOutput.children[index + 1].click();
+        } else {
+            textOutput.children[index + 1].click();
+        }
+    } else if (event.keyCode == 38) {
+        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+        if (activeHex) {
+            hexOutput.children[index - 16].click();
+        } else {
+            textOutput.children[index - 16].click();
+        }
+    } else if (event.keyCode == 40) {
+        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+        if (activeHex) {
+            hexOutput.children[index + 16].click();
+        } else {
+            textOutput.children[index + 16].click();
+        }
+    }
     if (activeHex) {
         var selected = document.getElementById('selected-hex');
         if ("1234567890abcdef".includes(event.key) && !" ".includes(event.key)) {
@@ -207,4 +263,28 @@ function handleKey(event) {
         }
     }
     
+}
+
+function getInfo(hexData, index, length) {
+    const arrayBuffer = new Uint8Array(hexData.match(/[\da-f]{2}/gi).map(function(h) {
+        return parseInt(h, 16);
+    })).buffer;
+    const byteArray = new Uint8Array(arrayBuffer);
+    const byte = byteArray[0];
+    const binary = byte.toString(2).padStart(8, '0');
+    const char = String.fromCharCode(byte);
+    const Uint8 = new Uint8Array(arrayBuffer, 0, 1)[0];
+    const Uint16 = new Uint16Array(arrayBuffer, 0, 1)[0];
+    const Uint32 = new Uint32Array(arrayBuffer, 0, 1)[0];
+    const Uint64 = new BigUint64Array(arrayBuffer, 0, 1)[0];
+
+    document.getElementById('name').innerText = fileName;
+    document.getElementById('bytes').innerText = length+" bytes";
+    document.getElementById('addr').innerText = index.toString(16).padStart(8, '0').toUpperCase();;
+    document.getElementById('8b').innerText = Uint8;
+    document.getElementById('16b').innerText = Uint16;
+    document.getElementById('32b').innerText = Uint32;
+    document.getElementById('64b').innerText = Uint64;
+    document.getElementById('char').innerText = char;
+    document.getElementById('bin').innerText = binary;
 }
