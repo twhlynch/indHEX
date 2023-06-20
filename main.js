@@ -157,6 +157,16 @@ function handleKey(event) {
                     textOutput.children[index].className = '';
                 }
                 textOutput.children[index].innerText = text;
+                console.log(selected.parentNode.children.length, index);
+                if (selected.parentNode.children.length === index + 1) {
+                    var newEl = document.createElement('span');
+                    newEl.innerText = "00";
+                    selected.parentNode.appendChild(newEl);
+
+                    var newTextEl = document.createElement('span');
+                    newTextEl.className = "lf";
+                    textOutput.appendChild(newTextEl);
+                }
                 selected.parentNode.children[index + 1].click();
             } else {
                 selected.innerText = event.key.toUpperCase();;
@@ -173,6 +183,15 @@ function handleKey(event) {
             let hex = byteVal.toString(16).padStart(2, '0').toUpperCase();;
 
             hexOutput.children[index].innerText = hex;
+            if (selected.parentNode.children.length === index + 1) {
+                var newEl = document.createElement('span');
+                newEl.innerText = "00";
+                hexOutput.appendChild(newEl);
+
+                var newTextEl = document.createElement('span');
+                newTextEl.className = "lf";
+                textOutput.appendChild(newTextEl);
+            }
             selected.parentNode.children[index + 1].click();
         }
     }
