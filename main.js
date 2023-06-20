@@ -173,6 +173,26 @@ function handleKey(event) {
         } else {
             textOutput.children[index + 16].click();
         }
+    } else if (event.keyCode == 46 || event.keyCode == 8) {
+        if (activeHex) {
+            var selected = document.getElementById('selected-hex');
+            var index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
+            if (index + 1 < hexOutput.children.length) {
+                hexOutput.children[index + 1].click();
+            } else if (index != 0) {
+                hexOutput.children[index - 1].click();
+            }
+        } else {
+            var selected = document.getElementById('selected-text');
+            var index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
+            if (index + 1 <= textOutput.children.length) {
+                textOutput.children[index + 1].click();
+            } else if (index != 0) {
+                textOutput.children[index - 1].click();
+            }
+        }
+        hexOutput.children[index].remove();
+        textOutput.children[index].remove();
     }
     if (activeHex) {
         var selected = document.getElementById('selected-hex');
@@ -180,7 +200,7 @@ function handleKey(event) {
             if (selected.getAttribute('data-type') == '1') {
                 selected.innerText += event.key.toUpperCase();;
                 selected.setAttribute('data-type', '0');
-                let index =  Array.prototype.indexOf.call(selected.parentNode.children, selected);
+                let index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
                 let byteVal = parseInt(selected.innerText, 16);
                 let text = String.fromCharCode(byteVal);
                 if ((byteVal >= 0 && byteVal) < 32 || (byteVal >= 128 && byteVal < 160)) {
