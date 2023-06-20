@@ -146,35 +146,20 @@ function handleClick(event) {
 function handleKey(event) {
     event.preventDefault();
     var index = Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+    var targetOutput = activeHex ? hexOutput : textOutput;
     if (event.keyCode === 37) {
-        var targetOutput = activeHex ? hexOutput : textOutput;
         targetOutput.children[index - 1].click();
     } else if (event.keyCode === 39) {
-        var targetOutput = activeHex ? hexOutput : textOutput;
         targetOutput.children[index + 1].click();
     } else if (event.keyCode === 38) {
-        var targetOutput = activeHex ? hexOutput : textOutput;
         targetOutput.children[index - 16].click();
     } else if (event.keyCode === 40) {
-        var targetOutput = activeHex ? hexOutput : textOutput;
         targetOutput.children[index + 16].click();
     } else if (event.keyCode == 46 || event.keyCode == 8) {
-        if (activeHex) {
-            var selected = document.getElementById('selected-hex');
-            var index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
-            if (index + 1 < hexOutput.children.length) {
-                hexOutput.children[index + 1].click();
-            } else if (index != 0) {
-                hexOutput.children[index - 1].click();
-            }
-        } else {
-            var selected = document.getElementById('selected-text');
-            var index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
-            if (index + 1 <= textOutput.children.length) {
-                textOutput.children[index + 1].click();
-            } else if (index != 0) {
-                textOutput.children[index - 1].click();
-            }
+        if (index + 1 < targetOutput.children.length) {
+            targetOutput.children[index + 1].click();
+        } else if (index != 0) {
+            targetOutput.children[index - 1].click();
         }
         hexOutput.children[index].remove();
         textOutput.children[index].remove();
