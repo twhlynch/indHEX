@@ -5,29 +5,23 @@ const lineOutput = document.getElementById('lines').childNodes[1];
 var activeHex = true;
 var fileName = 'Untitled.txt';
 
-window.addEventListener('dragover', handleDragOver, false);
-window.addEventListener('drop', handleFileDrop, false);
+window.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+}, false);
+window.addEventListener('drop', (event) => {
+    event.preventDefault();
+    loadFileToHex(event.dataTransfer.files[0]);
+}, false);
 window.addEventListener("mouseout", handleLeave, false);
 window.addEventListener("mouseover", handleHover, false);
 window.addEventListener("click", handleClick, false);
 window.addEventListener("keydown", handleKey, false);
-document.getElementById('file').addEventListener("change", handleFileChange, false);
+document.getElementById('file').addEventListener("change", (event) => {
+    loadFileToHex(event.target.files[0]);
+}, false);
 document.getElementById('save').addEventListener("click", saveFile, false);
 document.getElementById('open').addEventListener("click", () => {document.getElementById('file').click();}, false);
-
-function handleDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-}
-
-function handleFileDrop(event) {
-    event.preventDefault();
-    loadFileToHex(event.dataTransfer.files[0]);
-}
-
-function handleFileChange(event) {
-    loadFileToHex(event.target.files[0]);
-}
 
 function loadFileToHex(file) {
     hexOutput.innerText = '';
@@ -92,52 +86,37 @@ function saveFile() {
 }
 
 function handleHover(event) {
-    if (event.target.parentNode.parentNode.id == "hex") {
-        event.target.style.background = '#0ff3';
+    let parID = event.target.parentNode.parentNode.id;
+    if (parID == "hex" || parID == "text") {
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         textOutput.children[index].style.background = '#0ff3';
-    } else if (event.target.parentNode.parentNode.id == "text") {
-        event.target.style.background = '#0ff3';
-        let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].style.background = '#0ff3';
     }
 }
 
 function handleLeave(event) {
-    if (event.target.parentNode.parentNode.id == "hex") {
-        event.target.style.background = null;
+    let parID = event.target.parentNode.parentNode.id;
+    if (parID == "hex" || parID == "text") {
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         textOutput.children[index].style.background = null;
-    } else if (event.target.parentNode.parentNode.id == "text") {
-        event.target.style.background = null;
-        let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].style.background = null;
     }
 }
 
 function handleClick(event) {
-    if (event.target.parentNode.parentNode.id == "hex") {
-        activeHex = true;
-        if (document.getElementById('selected-hex').innerText.length == 1) {
-            document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
-            document.getElementById('selected-hex').setAttribute('data-type', '0');
+    let parID = event.target.parentNode.parentNode.id;
+    if (parID == "text" || parID == "hex") {
+        var selectedHex = document.getElementById('selected-hex');
+        var selectedText = document.getElementById('selected-text');
+        var index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
+        if (selectedHex.innerText.length == 1) {
+            selectedHex.innerText = selectedHex.innerText.padStart(2, '0');
+            selectedHex.setAttribute('data-type', '0');
         }
-        document.getElementById('selected-hex').id = null;
-        document.getElementById('selected-text').id = null;
-        event.target.id = 'selected-hex';
-        let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
+        selectedHex.id = null;
+        selectedText.id = null;
+        activeHex = parID == "hex" ? true : false;
         textOutput.children[index].id = 'selected-text';
-        getInfo(index, hexOutput.children.length);
-    } else if (event.target.parentNode.parentNode.id == "text") {
-        activeHex = false;
-        if (document.getElementById('selected-hex').innerText.length == 1) {
-            document.getElementById('selected-hex').innerText = document.getElementById('selected-hex').innerText.padStart(2, '0');
-            document.getElementById('selected-hex').setAttribute('data-type', '0');
-        }
-        document.getElementById('selected-text').id = null;
-        document.getElementById('selected-hex').id = null;
-        event.target.id = 'selected-text';
-        let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].id = 'selected-hex';
         getInfo(index, hexOutput.children.length);
     }
