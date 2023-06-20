@@ -11,11 +11,9 @@ window.addEventListener("mouseout", handleLeave, false);
 window.addEventListener("mouseover", handleHover, false);
 window.addEventListener("click", handleClick, false);
 window.addEventListener("keydown", handleKey, false);
-document.getElementById('file').addEventListener("change", openFile, false);
-document.getElementById('file-a').addEventListener("change", (event) => {openFile(event, false)}, false);
+document.getElementById('file').addEventListener("change", handleFileChange, false);
 document.getElementById('save').addEventListener("click", saveFile, false);
 document.getElementById('open').addEventListener("click", () => {document.getElementById('file').click();}, false);
-document.getElementById('append').addEventListener("click", () => {document.getElementById('file-a').click();}, false);
 
 function handleDragOver(event) {
     event.preventDefault();
@@ -24,56 +22,16 @@ function handleDragOver(event) {
 
 function handleFileDrop(event) {
     event.preventDefault();
-
-    const files = event.dataTransfer.files;
-    const file = files[0];
-    fileName = file.name;
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-        const arrayBuffer = event.target.result;
-        const byteArray = new Uint8Array(arrayBuffer);
-        const hexArray = Array.from(byteArray, byte => byte.toString(16).padStart(2, '0'));
-        
-        let lineVal = 0;
-        for (let i = 0; i < byteArray.length; i++) {
-            const byteValue = byteArray[i];
-            const hexValue = hexArray[i];
-            const strValue = String.fromCharCode(byteValue);
-            
-            if (i % 16 == 0) {
-                const lineElement = document.createElement('span');
-                lineElement.innerText = lineVal.toString(16).padStart(8, '0').toUpperCase();
-                lineVal += 16;
-                lineOutput.appendChild(lineElement);
-            }
-
-            const hexElement = document.createElement('span');
-            hexElement.innerText = hexValue.toUpperCase();
-            hexOutput.appendChild(hexElement);
-
-            const textElement = document.createElement('span');
-            textElement.innerText = strValue;
-            if ((byteValue >= 0 && byteValue) < 32 || (byteValue >= 128 && byteValue < 160)) {
-                textElement.className = 'lf';
-                textElement.innerText = " ";
-            }
-            textOutput.appendChild(textElement);
-        }
-        textOutput.children[0].id = 'selected-text';
-        hexOutput.children[0].id = 'selected-hex';
-    };
-
-    reader.readAsArrayBuffer(file);
+    loadFileToHex(event.dataTransfer.files[0]);
 }
 
-function openFile(event, clear = true) {
-    if (clear) {
-        hexOutput.innerText = '';
-        textOutput.innerText = '';
-    }
-    const files = event.target.files;
-    const file = files[0];
+function handleFileChange(event) {
+    loadFileToHex(event.target.files[0]);
+}
+
+function loadFileToHex(file) {
+    hexOutput.innerText = '';
+    textOutput.innerText = '';
     fileName = file.name;
     const reader = new FileReader();
 
@@ -169,16 +127,7 @@ function handleClick(event) {
         event.target.id = 'selected-hex';
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         textOutput.children[index].id = 'selected-text';
-        getInfo(
-            event.target.innerText +
-            (hexOutput.children[index + 1]?.innerText ?? '00') +
-            (hexOutput.children[index + 2]?.innerText ?? '00') +
-            (hexOutput.children[index + 3]?.innerText ?? '00') +
-            (hexOutput.children[index + 4]?.innerText ?? '00') +
-            (hexOutput.children[index + 5]?.innerText ?? '00') +
-            (hexOutput.children[index + 6]?.innerText ?? '00') +
-            (hexOutput.children[index + 7]?.innerText ?? '00')
-            , index, hexOutput.children.length);
+        getInfo(index, hexOutput.children.length);
     } else if (event.target.parentNode.parentNode.id == "text") {
         activeHex = false;
         if (document.getElementById('selected-hex').innerText.length == 1) {
@@ -190,16 +139,7 @@ function handleClick(event) {
         event.target.id = 'selected-text';
         let index = Array.prototype.indexOf.call(event.target.parentNode.children, event.target);
         hexOutput.children[index].id = 'selected-hex';
-        getInfo(
-            hexOutput.children[index].innerText +
-            (hexOutput.children[index + 1]?.innerText ?? '00') +
-            (hexOutput.children[index + 2]?.innerText ?? '00') +
-            (hexOutput.children[index + 3]?.innerText ?? '00') +
-            (hexOutput.children[index + 4]?.innerText ?? '00') +
-            (hexOutput.children[index + 5]?.innerText ?? '00') +
-            (hexOutput.children[index + 6]?.innerText ?? '00') +
-            (hexOutput.children[index + 7]?.innerText ?? '00')
-            , index, hexOutput.children.length);
+        getInfo(index, hexOutput.children.length);
     }
 }
 
@@ -273,7 +213,12 @@ function handleKey(event) {
     
 }
 
-function getInfo(hexData, index, length) {
+function getInfo(index, length) {
+    var hexData = "";
+    for (let i = 0; i < length - index && i < 8; i++) {
+        hexData += hexOutput.children[index + i].innerText;
+    }
+    hexData = hexData.padEnd(16, '0').toUpperCase();
     const arrayBuffer = new Uint8Array(hexData.match(/[\da-f]{2}/gi).map(function(h) {
         return parseInt(h, 16);
     })).buffer;
