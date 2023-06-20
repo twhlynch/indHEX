@@ -142,14 +142,12 @@ function handleKey(event) {
         }
         hexOutput.children[index].remove();
         textOutput.children[index].remove();
-    }
-    if (activeHex) {
+    } else if (activeHex) {
         var selected = document.getElementById('selected-hex');
-        if ("1234567890abcdef".includes(event.key) && !" ".includes(event.key)) {
+        if ("1234567890abcdef".includes(event.key) && event.key !== "") {
             if (selected.getAttribute('data-type') == '1') {
                 selected.innerText += event.key.toUpperCase();;
                 selected.setAttribute('data-type', '0');
-                let index = Array.prototype.indexOf.call(selected.parentNode.children, selected);
                 let byteVal = parseInt(selected.innerText, 16);
                 let text = String.fromCharCode(byteVal);
                 if ((byteVal >= 0 && byteVal) < 32 || (byteVal >= 128 && byteVal < 160)) {
@@ -170,7 +168,6 @@ function handleKey(event) {
             var selected = document.getElementById('selected-text');
             selected.innerText = event.key;
             selected.className = '';
-            let index =  Array.prototype.indexOf.call(selected.parentNode.children, selected);
 
             let byteVal = selected.innerText.charCodeAt(0);
             let hex = byteVal.toString(16).padStart(2, '0').toUpperCase();;
