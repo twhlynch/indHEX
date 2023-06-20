@@ -142,6 +142,16 @@ function handleKey(event) {
         }
         hexOutput.children[index].remove();
         textOutput.children[index].remove();
+    } else if (event.keyCode === 45) {
+        var newEl = document.createElement('span');
+        newEl.innerText = "00";
+        hexOutput.insertBefore(newEl, hexOutput.childNodes[index + 1]);
+
+        var newTextEl = document.createElement('span');
+        newTextEl.className = "lf";
+        textOutput.insertBefore(newTextEl, textOutput.childNodes[index + 1]);
+
+        targetOutput.children[index + 1].click();
     } else if (activeHex) {
         var selected = document.getElementById('selected-hex');
         if ("1234567890abcdef".includes(event.key) && event.key !== "") {
