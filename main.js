@@ -145,34 +145,19 @@ function handleClick(event) {
 
 function handleKey(event) {
     event.preventDefault();
-    if (event.keyCode == 37) {
-        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
-        if (activeHex) {
-            hexOutput.children[index - 1].click();
-        } else {
-            textOutput.children[index - 1].click();
-        }
-    } else if (event.keyCode == 39) {
-        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
-        if (activeHex) {
-            hexOutput.children[index + 1].click();
-        } else {
-            textOutput.children[index + 1].click();
-        }
-    } else if (event.keyCode == 38) {
-        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
-        if (activeHex) {
-            hexOutput.children[index - 16].click();
-        } else {
-            textOutput.children[index - 16].click();
-        }
-    } else if (event.keyCode == 40) {
-        let index =  Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
-        if (activeHex) {
-            hexOutput.children[index + 16].click();
-        } else {
-            textOutput.children[index + 16].click();
-        }
+    var index = Array.prototype.indexOf.call(document.getElementById('selected-hex').parentNode.children, document.getElementById('selected-hex'));
+    if (event.keyCode === 37) {
+        var targetOutput = activeHex ? hexOutput : textOutput;
+        targetOutput.children[index - 1].click();
+    } else if (event.keyCode === 39) {
+        var targetOutput = activeHex ? hexOutput : textOutput;
+        targetOutput.children[index + 1].click();
+    } else if (event.keyCode === 38) {
+        var targetOutput = activeHex ? hexOutput : textOutput;
+        targetOutput.children[index - 16].click();
+    } else if (event.keyCode === 40) {
+        var targetOutput = activeHex ? hexOutput : textOutput;
+        targetOutput.children[index + 16].click();
     } else if (event.keyCode == 46 || event.keyCode == 8) {
         if (activeHex) {
             var selected = document.getElementById('selected-hex');
