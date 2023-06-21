@@ -205,7 +205,17 @@ function handleKey(event) {
             selected.parentNode.children[index + 1].click();
         }
     }
-    
+    var lineVal = 0;
+    lineOutput.innerHTML = "";
+    for (let i = 0; i < hexOutput.children.length; i++) {
+        if (i % 16 == 0) {
+            console.log(lineVal)
+            const lineElement = document.createElement('span');
+            lineElement.innerText = lineVal.toString(16).padStart(8, '0').toUpperCase();
+            lineVal += 16;
+            lineOutput.appendChild(lineElement);
+        }
+    }
 }
 
 function getInfo(index, length) {
